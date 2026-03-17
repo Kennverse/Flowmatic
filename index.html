@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/HP/OneDrive/Desktop/KENNY/DESIGN/index.html -->
+<!-- saved from url=(0072)file:///C:/Users/HP/OneDrive/Desktop/KENNY/BYMAMA/flowmatic-landing.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flowmatic — Automation That Works While You Don't</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="file:///C:/Users/HP/OneDrive/Desktop/KENNY/DESIGN/Flowmatic%20%E2%80%94%20Automation%20That%20Works%20While%20You%20Don&#39;t_files/css2" rel="stylesheet">
+<link href="./index_files/css2" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -680,7 +680,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="file:///C:/Users/HP/OneDrive/Desktop/KENNY/index.html#" class="logo">
+  <a href="file:///C:/Users/HP/OneDrive/Desktop/KENNY/BYMAMA/flowmatic-landing.html#" class="logo">
     <span class="logo-dot"></span>
     Flowmatic
   </a>
@@ -931,7 +931,7 @@
         <div class="t-avatar" style="background:#fef3c7;color:#92400e;">MT</div>
         <div>
           <div class="t-name">Marco T.</div>
-          <div class="t-role">Operations Lead, SaaS Startup — Lagos, Nigeria</div>
+          <div class="t-role">Operations Lead, FinTech — Lagos, Nigeria</div>
         </div>
       </div>
     </div>
@@ -948,7 +948,7 @@
   <div class="pricing-grid reveal visible">
     <div class="pricing-card">
       <div class="plan-name">Starter</div>
-      <div class="plan-price">$75 <span>/ mo</span></div>
+      <div class="plan-price">$75<span>/ mo</span></div>
       <div class="plan-desc">Best for solopreneurs and small teams</div>
       <ul class="plan-features">
         <li>Up to 3 active workflows</li>
@@ -1008,14 +1008,14 @@
 
 <!-- FOOTER -->
 <footer>
-  <a href="file:///C:/Users/HP/OneDrive/Desktop/KENNY/index.html#" class="logo"><span class="logo-dot"></span> Flowmatic</a>
-  <p>© 2026 Flowmatic. Powered by Flowmatic. Built for the world.</p>
+  <a href="file:///C:/Users/HP/OneDrive/Desktop/KENNY/BYMAMA/flowmatic-landing.html#" class="logo"><span class="logo-dot"></span> Flowmatic</a>
+  <p>© 2025 Flowmatic. Powered by n8n. Built for the world.</p>
 </footer>
 
 <script>
 // ── CONFIGURATION ──────────────────────────────────────────────
-// Paste your n8n webhook URL below after setting it up
-const N8N_WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL_HERE';
+// Paste your Formspree form ID below (e.g. 'xpwzgkrb')
+const FORMSPREE_ID = 'mzdjkope';
 // ───────────────────────────────────────────────────────────────
 
 async function submitWaitlist(inputId, formId) {
@@ -1030,24 +1030,25 @@ async function submitWaitlist(inputId, formId) {
     return;
   }
 
-  // Get the submit button and show loading state
+  // Show loading state
   const btn = input.closest('.form-row, .final-form-row')?.querySelector('button');
   const originalText = btn?.innerHTML;
   if (btn) { btn.innerHTML = 'Sending...'; btn.disabled = true; }
 
   try {
-    const res = await fetch(N8N_WEBHOOK_URL, {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: email,
+        _subject: 'New Flowmatic Waitlist Signup',
         submitted_at: new Date().toISOString(),
         source: document.referrer || 'direct',
         page: window.location.href
       })
     });
 
-    if (!res.ok) throw new Error('Webhook error');
+    if (!res.ok) throw new Error('Formspree error');
 
     // Show success
     const successId = inputId === 'hero-email' ? 'hero-success' : 'final-success';
@@ -1057,15 +1058,10 @@ async function submitWaitlist(inputId, formId) {
     if (success) success.classList.add('show');
 
   } catch (err) {
-    // Fallback — still show success to user, log error silently
-    console.error('Webhook failed:', err);
-    const successId = inputId === 'hero-email' ? 'hero-success' : 'final-success';
-    const formEl = input.closest('.form-row') || document.getElementById('final-form-wrap');
-    if (formEl) formEl.style.display = 'none';
-    const success = document.getElementById(successId);
-    if (success) success.classList.add('show');
-  } finally {
-    if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+    console.error('Submission failed:', err);
+    if (btn) { btn.innerHTML = 'Try again'; btn.disabled = false; }
+    input.style.border = '1.5px solid #e24b4a';
+    setTimeout(() => { input.style.border = ''; if (btn) btn.innerHTML = originalText; }, 2500);
   }
 }
 
